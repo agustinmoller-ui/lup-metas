@@ -99,10 +99,8 @@
   var PAGES = {
     metas2026: { label: 'Metas', year: 'Metas 2026', group: 'y2026', eyebrow: 'Metas 2026' },
     seguimiento2026: { label: 'Seguimiento', year: 'Metas 2026', group: 'y2026', eyebrow: 'Metas 2026' },
-    bases2026: { label: 'Bases de metas', year: 'Metas 2026', group: 'y2026', eyebrow: 'Metas 2026' },
     metas2027: { label: 'Metas', year: 'Metas 2027', group: 'y2027', eyebrow: 'Metas 2027' },
     seguimiento2027: { label: 'Seguimiento', year: 'Metas 2027', group: 'y2027', eyebrow: 'Metas 2027' },
-    bases2027: { label: 'Bases de metas', year: 'Metas 2027', group: 'y2027', eyebrow: 'Metas 2027' },
     acuerdos: { label: 'Acuerdos y contratos', year: null, group: null, eyebrow: 'Documentos' }
   };
 
