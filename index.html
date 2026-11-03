@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://agustinmoller-ui.github.io; font-src 'self' https://agustinmoller-ui.github.io; connect-src https://lupita-f3e3c640.base44.app; frame-src 'self' about: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#052d82">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Portal privado de metas, seguimiento y bases de metas de LUP. Acceso restringido con clave.">
+<title>LUP · Portal de metas</title>
+<link rel="icon" href="assets/logo_lup.png" type="image/png">
+<link rel="preload" href="assets/fuente_5.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="assets/fuente_1.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0">
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3.2" y="4.2" width="17.6" height="15.6" rx="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9.4 4.4v15.2" stroke="currentColor" stroke-width="1.7"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5.2" width="17" height="15.3" rx="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3.8 10.2h16.4M8.2 3.4v3.4M15.8 3.4v3.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 19.4V4.6M4 19.4h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 15.6V11M12.4 15.6V7.4M16.8 15.6v-3.2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-bases" viewBox="0 0 24 24"><ellipse cx="12" cy="6.4" rx="7.6" ry="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M4.4 6.4v11.2c0 1.7 3.4 3 7.6 3s7.6-1.3 7.6-3V6.4M4.4 12c0 1.7 3.4 3 7.6 3s7.6-1.3 7.6-3" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6.2 3.6h7.4l4.2 4.3v12.5H6.2z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13.4 3.8v4.4h4.4M9 12.4h6M9 16h4.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3.3l1.5 2.1 2.5-.6 1 2.4 2.5.7-.4 2.6 1.7 2-1.7 2 .4 2.6-2.5.7-1 2.4-2.5-.6L12 20.7l-1.5-2.1-2.5.6-1-2.4-2.5-.7.4-2.6-1.7-2 1.7-2-.4-2.6 2.5-.7 1-2.4 2.5.6z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M14.5 4.6H7.2a2.4 2.4 0 00-2.4 2.4v10a2.4 2.4 0 002.4 2.4h7.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M13.4 12h6.8m-2.6-2.8L20.4 12l-2.8 2.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4.4v10.2m-4-3.9l4 4 4-4M5 18.6h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.4l7 2.6v6c0 4-2.9 7.2-7 8.6-4.1-1.4-7-4.6-7-8.6v-6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 12.2l2.2 2.2 4-4.2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M19.4 12a7.4 7.4 0 11-2.3-5.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M19.6 4.6v4.2h-4.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.8 12S6 6.6 12 6.6 21.2 12 21.2 12 18 17.4 12 17.4 2.8 12 2.8 12z" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="2.6" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M4 4l16 16M9.8 5.3A9.9 9.9 0 0112 5.1c6 0 9.2 5.4 9.2 5.4a15 15 0 01-2.6 3.2M6.3 7.5A15.5 15.5 0 002.8 10.5s3.2 5.4 9.2 5.4a8.9 8.9 0 003.3-.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.8" y="10.4" width="14.4" height="9.6" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8.4 10.2V8a3.6 3.6 0 017.2 0v2.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8.2" cy="15.6" r="4.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M11.4 12.4L19.6 4.2M16.4 7.4l2 2M14.2 9.6l2 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3.4" y="5.6" width="17.2" height="12.8" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M4.4 7.6l7.6 5.4 7.6-5.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.6l4.4 4.4L19 7.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.6l9 16.2H3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 9.4v4.4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="16.8" r="1.1" fill="currentColor"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4.2 10.4L12 4l7.8 6.4V19a1.6 1.6 0 01-1.6 1.6H5.8A1.6 1.6 0 014.2 19z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.6 20.4v-6h4.8v6" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+</svg>
+
+<!-- Pantalla de carga inicial -->
+<div class="boot" id="boot" role="status" aria-live="polite">
+  <img src="assets/logo_lup.png" alt="LUP" class="boot-logo">
+  <span class="boot-spinner" aria-hidden="true"></span>
+  <p>Verificando sesión privada</p>
+</div>
+
+<!-- Acceso privado -->
+<section class="auth" id="view-login" hidden>
+  <div class="auth-aside">
+    <div class="auth-aside-top">
+      <img src="assets/logo_lup.png" alt="LUP" class="auth-logo">
+      <span class="auth-tag">Acceso privado</span>
+    </div>
+    <div class="auth-aside-body">
+      <p class="eyebrow eyebrow--light"><span></span>Portal de metas</p>
+      <h1 class="auth-title">Volvamos a lo simple.</h1>
+      <p class="auth-hand">Usa. Retorna. Repite.</p>
+      <p class="auth-lede">Metas, seguimiento y bases de metas en un solo lugar. Un acceso privado para revisar el avance con la misma disciplina con la que trabajamos todos los días.</p>
+      <ul class="auth-features">
+        <li><svg><use href="#i-target"></use></svg><span>Metas 2026 y metas 2027</span></li>
+        <li><svg><use href="#i-chart"></use></svg><span>Seguimiento y bases de metas</span></li>
+        <li><svg><use href="#i-doc"></use></svg><span>Acuerdos y contratos</span></li>
+      </ul>
+    </div>
+    <div class="auth-aside-foot">
+      <span>LUP</span>
+      <span class="dot"></span>
+      <span>Un solo lugar, una sola forma de mirar los números.</span>
+    </div>
+  </div>
+
+  <div class="auth-main">
+    <div class="auth-card">
+      <header class="auth-card-head">
+        <p class="eyebrow"><span></span>Sesión privada</p>
+        <h2>Ingresa al portal</h2>
+        <p class="auth-sub">El contenido se carga desde el servidor autenticado. No hay información guardada en esta página.</p>
+      </header>
+
+      <form class="form" id="form-login" novalidate>
+        <fieldset class="role-switch">
+          <legend>Tipo de acceso</legend>
+          <label class="role-option">
+            <input type="radio" name="role" value="viewer" checked>
+            <span class="role-body">
+              <svg><use href="#i-eye"></use></svg>
+              <span>Lector</span>
+              <small>Solo consulta</small>
+            </span>
+          </label>
+          <label class="role-option">
+            <input type="radio" name="role" value="admin">
+            <span class="role-body">
+              <svg><use href="#i-shield"></use></svg>
+              <span>Administrador</span>
+              <small>Accesos y claves</small>
+            </span>
+          </label>
+        </fieldset>
+
+        <div class="field">
+          <label for="login-password">Clave de acceso</label>
+          <div class="field-control">
+            <input type="password" id="login-password" name="password" autocomplete="current-password" minlength="12" required placeholder="Ingresa tu clave">
+            <button type="button" class="reveal" data-reveal="login-password" aria-label="Mostrar clave" aria-pressed="false">
+              <svg><use href="#i-eye"></use></svg>
+            </button>
+          </div>
+          <p class="field-hint">La clave tiene un mínimo de 12 caracteres.</p>
+        </div>
+
+        <p class="form-error" id="login-error" role="alert" hidden></p>
+
+        <button type="submit" class="btn btn-primary btn-block" id="btn-login">
+          <span class="btn-label">Entrar al portal</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+
+        <p class="auth-note"><svg><use href="#i-lock"></use></svg>La sesión se guarda solo en esta pestaña y se cierra al salir.</p>
+      </form>
+    </div>
+
+    <footer class="auth-foot">
+      <span>Acceso restringido. Si no tienes clave, solicítala al administrador del portal.</span>
+      <span class="auth-foot-tag">Volvamos a lo simple.</span>
+    </footer>
+  </div>
+</section>
+
+<!-- Activación de primera vez -->
+<section class="auth" id="view-setup" hidden>
+  <div class="auth-aside auth-aside--setup">
+    <div class="auth-aside-top">
+      <img src="assets/logo_lup.png" alt="LUP" class="auth-logo">
+      <span class="auth-tag">Primera configuración</span>
+    </div>
+    <div class="auth-aside-body">
+      <p class="eyebrow eyebrow--light"><span></span>Portal de metas</p>
+      <h1 class="auth-title">Deja el portal listo.</h1>
+      <p class="auth-hand">Usa. Retorna. Repite.</p>
+      <p class="auth-lede">Define dos claves distintas para este portal: una para administrar accesos y otra para la lectura del equipo. Ambas se guardan cifradas en el servidor, nunca en esta página.</p>
+      <ul class="auth-features">
+        <li><svg><use href="#i-shield"></use></svg><span>Clave de administración</span></li>
+        <li><svg><use href="#i-eye"></use></svg><span>Clave de lectura</span></li>
+        <li><svg><use href="#i-check"></use></svg><span>Mínimo 12 caracteres por clave</span></li>
+      </ul>
+    </div>
+    <div class="auth-aside-foot">
+      <span>LUP</span>
+      <span class="dot"></span>
+      <span>Un enlace de activación, un solo uso.</span>
+    </div>
+  </div>
+
+  <div class="auth-main">
+    <div class="auth-card auth-card--wide">
+      <header class="auth-card-head">
+        <p class="eyebrow"><span></span>Activación</p>
+        <h2>Crea las claves del portal</h2>
+        <p class="auth-sub">Este enlace es de un solo uso. Cuando guardes las claves, el portal queda activo para el equipo.</p>
+      </header>
+
+      <form class="form" id="form-setup" novalidate>
+        <div class="setup-block">
+          <div class="setup-title">
+            <svg><use href="#i-shield"></use></svg>
+            <div><strong>Clave de administración</strong><small>Permite cambiar claves y cerrar sesiones.</small></div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="setup-admin">Nueva clave</label>
+              <div class="field-control">
+                <input type="password" id="setup-admin" name="adminPassword" autocomplete="new-password" minlength="12" required placeholder="Mínimo 12 caracteres">
+                <button type="button" class="reveal" data-reveal="setup-admin" aria-label="Mostrar clave" aria-pressed="false"><svg><use href="#i-eye"></use></svg></button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="setup-admin-2">Repite la clave</label>
+              <div class="field-control">
+                <input type="password" id="setup-admin-2" name="adminPasswordConfirm" autocomplete="new-password" minlength="12" required placeholder="Repite la clave">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="setup-block">
+          <div class="setup-title">
+            <svg><use href="#i-eye"></use></svg>
+            <div><strong>Clave de lectura</strong><small>Permite ver metas, seguimiento y descargas.</small></div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="setup-viewer">Nueva clave</label>
+              <div class="field-control">
+                <input type="password" id="setup-viewer" name="viewerPassword" autocomplete="new-password" minlength="12" required placeholder="Mínimo 12 caracteres">
+                <button type="button" class="reveal" data-reveal="setup-viewer" aria-label="Mostrar clave" aria-pressed="false"><svg><use href="#i-eye"></use></svg></button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="setup-viewer-2">Repite la clave</label>
+              <div class="field-control">
+                <input type="password" id="setup-viewer-2" name="viewerPasswordConfirm" autocomplete="new-password" minlength="12" required placeholder="Repite la clave">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="form-error" id="setup-error" role="alert" hidden></p>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="btn-setup">
+            <span class="btn-label">Guardar claves y entrar</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="btn btn-ghost" id="btn-setup-cancel">Cancelar</button>
+        </div>
+
+        <p class="auth-note"><svg><use href="#i-lock"></use></svg>Las claves no se guardan en el navegador ni se muestran en pantalla después de guardarlas.</p>
+      </form>
+    </div>
+
+    <footer class="auth-foot">
+      <span>El enlace de activación se invalida al completar este paso.</span>
+      <span class="auth-foot-tag">Volvamos a lo simple.</span>
+    </footer>
+  </div>
+</section>
+
+<!-- Aplicación -->
+<div class="app" id="view-app" hidden>
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del portal">
+    <div class="side-head">
+      <a class="side-brand" href="#" id="link-home" aria-label="Inicio del portal">
+        <img src="assets/logo_lup.png" alt="LUP" class="side-logo">
+        <span class="side-brand-text">
+          <strong>Portal de metas</strong>
+          <small>Volvamos a lo simple.</small>
+        </span>
+      </a>
+      <button type="button" class="side-close" id="btn-drawer-close" aria-label="Cerrar menú">
+        <svg><use href="#i-close"></use></svg>
+      </button>
+    </div>
+
+    <nav class="nav" aria-label="Secciones">
+      <p class="nav-label">Contenido</p>
+
+      <button type="button" class="nav-inicio" id="nav-inicio">
+        <svg class="nav-icon"><use href="#i-home"></use></svg>
+        <span class="nav-text">Inicio</span>
+      </button>
+
+      <div class="nav-group">
+        <button type="button" class="nav-item nav-toggle" data-group="metas" aria-expanded="true" aria-controls="nav-metas">
+          <svg class="nav-icon"><use href="#i-target"></use></svg>
+          <span class="nav-text">Metas</span>
+          <svg class="nav-chev"><use href="#i-chevron"></use></svg>
+        </button>
+
+        <div class="nav-sub" id="nav-metas">
+          <div class="nav-branch">
+            <button type="button" class="nav-item nav-toggle nav-item--sub" data-group="y2026" aria-expanded="true" aria-controls="nav-2026">
+              <svg class="nav-icon"><use href="#i-calendar"></use></svg>
+              <span class="nav-text">Metas 2026</span>
+              <svg class="nav-chev"><use href="#i-chevron"></use></svg>
+            </button>
+            <div class="nav-sub nav-sub--deep" id="nav-2026">
+              <button type="button" class="nav-link" data-page="metas2026"><span class="nav-line"></span><span class="nav-text">Metas</span></button>
+              <button type="button" class="nav-link" data-page="seguimiento2026"><span class="nav-line"></span><span class="nav-text">Seguimiento</span></button>
+              <button type="button" class="nav-link" data-page="bases2026"><span class="nav-line"></span><span class="nav-text">Bases de metas</span></button>
+            </div>
+          </div>
+
+          <div class="nav-branch">
+            <button type="button" class="nav-item nav-toggle nav-item--sub" data-group="y2027" aria-expanded="false" aria-controls="nav-2027">
+              <svg class="nav-icon"><use href="#i-calendar"></use></svg>
+              <span class="nav-text">Metas 2027</span>
+              <svg class="nav-chev"><use href="#i-chevron"></use></svg>
+            </button>
+            <div class="nav-sub nav-sub--deep" id="nav-2027" hidden>
+              <button type="button" class="nav-link" data-page="metas2027"><span class="nav-line"></span><span class="nav-text">Metas</span></button>
+              <button type="button" class="nav-link" data-page="seguimiento2027"><span class="nav-line"></span><span class="nav-text">Seguimiento</span></button>
+              <button type="button" class="nav-link" data-page="bases2027"><span class="nav-line"></span><span class="nav-text">Bases de metas</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="nav-item" data-page="acuerdos">
+        <svg class="nav-icon"><use href="#i-doc"></use></svg>
+        <span class="nav-text">Acuerdos y contratos</span>
+      </button>
+    </nav>
+
+    <div class="side-foot">
+      <button type="button" class="side-admin" id="nav-admin" aria-haspopup="true">
+        <svg class="nav-icon"><use href="#i-gear"></use></svg>
+        <span class="nav-text">Administración</span>
+        <span class="side-admin-dot" aria-hidden="true"></span>
+      </button>
+      <p class="side-version">Portal privado LUP</p>
+    </div>
+  </aside>
+
+  <div class="drawer-scrim" id="drawer-scrim" hidden></div>
+
+  <div class="app-main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button type="button" class="icon-btn only-mobile" id="btn-drawer" aria-label="Abrir menú" aria-expanded="false" aria-controls="sidebar">
+          <svg><use href="#i-menu"></use></svg>
+        </button>
+        <button type="button" class="icon-btn only-desktop" id="btn-collapse" aria-label="Contraer menú" aria-expanded="true" aria-controls="sidebar">
+          <svg><use href="#i-panel"></use></svg>
+        </button>
+        <div class="crumbs" id="crumbs" aria-label="Ubicación">
+          <span class="crumb">LUP</span>
+          <span class="crumb-sep">/</span>
+          <span class="crumb crumb--now">Inicio</span>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <div class="downloads" role="group" aria-label="Descargas">
+          <button type="button" class="btn btn-soft" data-download="carta">
+            <svg><use href="#i-download"></use></svg><span class="btn-label">Carta</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="btn btn-soft" data-download="kpiPDF">
+            <svg><use href="#i-download"></use></svg><span class="btn-label">KPI PDF</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+        </div>
+        <span class="session-chip" id="session-chip" title="Tipo de sesión">
+          <span class="session-dot" aria-hidden="true"></span>
+          <span id="session-role">Lector</span>
+          <small id="session-exp">Sesión activa</small>
+        </span>
+        <button type="button" class="icon-btn icon-btn--line" id="btn-logout" aria-label="Cerrar sesión" title="Cerrar sesión">
+          <svg><use href="#i-logout"></use></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="stage" id="stage">
+      <!-- Inicio -->
+      <section class="panel panel-inicio" id="panel-inicio" aria-labelledby="inicio-title">
+        <div class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow eyebrow--light"><span></span>Portal privado</p>
+            <h1 id="inicio-title">Todo lo importante,<br>en un solo lugar.</h1>
+            <p class="hero-lede">Metas, seguimiento y bases de metas de cada año, más los acuerdos y contratos del equipo. La información se carga desde el servidor autenticado al abrir cada sección.</p>
+            <p class="hero-hand">Usa. Retorna. Repite.</p>
+          </div>
+          <div class="hero-badge" aria-hidden="true">
+            <img src="assets/logo_lup.png" alt="">
+          </div>
+        </div>
+
+        <div class="quick-grid">
+          <button type="button" class="quick-card" data-page="metas2026">
+            <span class="quick-icon"><svg><use href="#i-calendar"></use></svg></span>
+            <span class="quick-text"><strong>Metas 2026</strong><small>Metas, seguimiento y bases del período.</small></span>
+            <svg class="quick-arrow"><use href="#i-chevron"></use></svg>
+          </button>
+          <button type="button" class="quick-card" data-page="metas2027">
+            <span class="quick-icon"><svg><use href="#i-calendar"></use></svg></span>
+            <span class="quick-text"><strong>Metas 2027</strong><small>El marco del próximo período, ordenado igual.</small></span>
+            <svg class="quick-arrow"><use href="#i-chevron"></use></svg>
+          </button>
+          <button type="button" class="quick-card" data-page="acuerdos">
+            <span class="quick-icon"><svg><use href="#i-doc"></use></svg></span>
+            <span class="quick-text"><strong>Acuerdos y contratos</strong><small>Documentos vigentes del equipo.</small></span>
+            <svg class="quick-arrow"><use href="#i-chevron"></use></svg>
+          </button>
+        </div>
+
+        <div class="notice">
+          <svg><use href="#i-lock"></use></svg>
+          <p><strong>Contenido privado.</strong> Las secciones se abren solo con tu sesión activa. Si la sesión expira, el portal te pedirá la clave nuevamente.</p>
+        </div>
+      </section>
+
+      <!-- Contenido de página -->
+      <section class="panel panel-content" id="panel-content" aria-labelledby="content-title" hidden>
+        <header class="content-head">
+          <div>
+            <p class="eyebrow"><span></span><span id="content-eyebrow">Metas</span></p>
+            <h1 id="content-title">Metas</h1>
+          </div>
+          <div class="content-tools">
+            <button type="button" class="btn btn-ghost" id="btn-reload">
+              <svg><use href="#i-refresh"></use></svg><span class="btn-label">Actualizar</span>
+              <span class="spinner" aria-hidden="true"></span>
+            </button>
+          </div>
+        </header>
+
+        <div class="frame-shell" id="frame-shell" data-state="loading">
+          <div class="frame-loading" aria-hidden="true">
+            <div class="sk sk-title"></div>
+            <div class="sk sk-line"></div>
+            <div class="sk sk-line sk-line--short"></div>
+            <div class="sk-grid">
+              <div class="sk sk-block"></div>
+              <div class="sk sk-block"></div>
+              <div class="sk sk-block"></div>
+            </div>
+          </div>
+
+          <iframe id="content-frame" class="content-frame" title="Contenido del portal" sandbox="allow-scripts allow-modals" referrerpolicy="no-referrer"></iframe>
+
+          <div class="frame-error" id="frame-error" role="alert">
+            <span class="frame-error-icon"><svg><use href="#i-alert"></use></svg></span>
+            <h2>No pudimos abrir esta sección</h2>
+            <p id="frame-error-text">Revisa tu conexión e inténtalo otra vez.</p>
+            <button type="button" class="btn btn-primary" id="btn-retry">Reintentar</button>
+          </div>
+        </div>
+
+        <p class="frame-note">Contenido servido por la API privada. Esta página no guarda copias ni datos en el navegador.</p>
+      </section>
+
+      <!-- Administración -->
+      <section class="panel panel-admin" id="panel-admin" aria-labelledby="admin-title" hidden>
+        <header class="content-head">
+          <div>
+            <p class="eyebrow"><span></span>Configuración</p>
+            <h1 id="admin-title">Administración</h1>
+            <p class="content-sub">Claves de acceso, sesiones activas y estado del portal.</p>
+          </div>
+          <div class="content-tools">
+            <button type="button" class="btn btn-ghost" id="btn-settings-reload">
+              <svg><use href="#i-refresh"></use></svg><span class="btn-label">Actualizar estado</span>
+              <span class="spinner" aria-hidden="true"></span>
+            </button>
+          </div>
+        </header>
+
+        <!-- Vista para lectores -->
+        <div class="admin-blocked" id="admin-blocked" hidden>
+          <span class="admin-blocked-icon"><svg><use href="#i-shield"></use></svg></span>
+          <h2>Tu sesión es de solo lectura</h2>
+          <p>Puedes recorrer las metas, el seguimiento y descargar los documentos, pero las claves y las sesiones se administran con una sesión de administrador. Esta sesión no cambia de rol.</p>
+          <div class="admin-blocked-actions">
+            <button type="button" class="btn btn-primary" id="btn-relogin-admin">Volver a iniciar como administrador</button>
+            <button type="button" class="btn btn-ghost" data-page="metas2026">Seguir revisando metas</button>
+          </div>
+          <p class="admin-blocked-note">Al continuar se cierra esta sesión y el portal te pedirá la clave de administración.</p>
+        </div>
+
+        <!-- Vista para administradores -->
+        <div id="admin-panel" hidden>
+          <div class="admin-status" id="admin-status" aria-live="polite">
+            <div class="status-item">
+              <span class="status-label"><svg><use href="#i-mail"></use></svg>Administrador</span>
+              <strong id="admin-email">Sin información</strong>
+              <small>Dato informativo. Los usuarios se gestionan fuera de este portal.</small>
+            </div>
+            <div class="status-item">
+              <span class="status-label"><svg><use href="#i-eye"></use></svg>Acceso de lectura</span>
+              <strong id="admin-viewer">Consultando</strong>
+              <small>Si está desactivado, solo entra el administrador.</small>
+            </div>
+            <div class="status-item">
+              <span class="status-label"><svg><use href="#i-lock"></use></svg>Duración de sesión</span>
+              <strong id="admin-hours">Consultando</strong>
+              <small>El portal cierra la sesión al cumplirse el plazo.</small>
+            </div>
+          </div>
+
+          <div class="admin-grid">
+            <article class="admin-card">
+              <header class="admin-card-head">
+                <span class="admin-card-icon"><svg><use href="#i-key"></use></svg></span>
+                <div><h2>Cambiar clave de lectura</h2><p>Para quien solo consulta las metas.</p></div>
+              </header>
+              <form class="form" data-rotate="viewer" novalidate>
+                <div class="field">
+                  <label for="rot-viewer-current">Tu clave de administración</label>
+                  <div class="field-control">
+                    <input type="password" id="rot-viewer-current" name="currentPassword" autocomplete="current-password" required placeholder="Clave actual de administración">
+                    <button type="button" class="reveal" data-reveal="rot-viewer-current" aria-label="Mostrar clave" aria-pressed="false"><svg><use href="#i-eye"></use></svg></button>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="rot-viewer-new">Nueva clave de lectura</label>
+                  <div class="field-control">
+                    <input type="password" id="rot-viewer-new" name="newPassword" autocomplete="new-password" minlength="12" required placeholder="Mínimo 12 caracteres">
+                    <button type="button" class="reveal" data-reveal="rot-viewer-new" aria-label="Mostrar clave" aria-pressed="false"><svg><use href="#i-eye"></use></svg></button>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="rot-viewer-confirm">Confirma la nueva clave</label>
+                  <input type="password" id="rot-viewer-confirm" name="newPasswordConfirm" autocomplete="new-password" minlength="12" required placeholder="Repite la nueva clave">
+                </div>
+                <p class="form-error" role="alert" hidden></p>
+                <button type="submit" class="btn btn-primary">
+                  <span class="btn-label">Cambiar clave de lectura</span><span class="spinner" aria-hidden="true"></span>
+                </button>
+              </form>
+            </article>
+
+            <article class="admin-card">
+              <header class="admin-card-head">
+                <span class="admin-card-icon"><svg><use href="#i-shield"></use></svg></span>
+                <div><h2>Cambiar clave de administración</h2><p>Para entrar con permisos completos.</p></div>
+              </header>
+              <form class="form" data-rotate="admin" novalidate>
+                <div class="field">
+                  <label for="rot-admin-current">Tu clave de administración actual</label>
+                  <div class="field-control">
+                    <input type="password" id="rot-admin-current" name="currentPassword" autocomplete="current-password" required placeholder="Clave actual de administración">
+                    <button type="button" class="reveal" data-reveal="rot-admin-current" aria-label="Mostrar clave" aria-pressed="false"><svg><use href="#i-eye"></use></svg></button>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="rot-admin-new">Nueva clave de administración</label>
+                  <div class="field-control">
+                    <input type="password" id="rot-admin-new" name="newPassword" autocomplete="new-password" minlength="12" required placeholder="Mínimo 12 caracteres">
+                    <button type="button" class="reveal" data-reveal="rot-admin-new" aria-label="Mostrar clave" aria-pressed="false"><svg><use href="#i-eye"></use></svg></button>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="rot-admin-confirm">Confirma la nueva clave</label>
+                  <input type="password" id="rot-admin-confirm" name="newPasswordConfirm" autocomplete="new-password" minlength="12" required placeholder="Repite la nueva clave">
+                </div>
+                <p class="form-error" role="alert" hidden></p>
+                <button type="submit" class="btn btn-primary">
+                  <span class="btn-label">Cambiar clave de administración</span><span class="spinner" aria-hidden="true"></span>
+                </button>
+              </form>
+            </article>
+          </div>
+
+          <div class="admin-grid admin-grid--single">
+            <article class="admin-card admin-card--warn">
+              <header class="admin-card-head">
+                <span class="admin-card-icon"><svg><use href="#i-logout"></use></svg></span>
+                <div><h2>Cerrar todas las sesiones</h2><p>Expulsa a todos los dispositivos conectados, incluido este.</p></div>
+              </header>
+              <form class="form" id="form-revoke" novalidate>
+                <div class="field">
+                  <label for="revoke-current">Tu clave de administración</label>
+                  <div class="field-control">
+                    <input type="password" id="revoke-current" name="currentPassword" autocomplete="current-password" required placeholder="Clave actual de administración">
+                    <button type="button" class="reveal" data-reveal="revoke-current" aria-label="Mostrar clave" aria-pressed="false"><svg><use href="#i-eye"></use></svg></button>
+                  </div>
+                  <p class="field-hint">Cambiar una clave también cierra las sesiones activas.</p>
+                </div>
+                <p class="form-error" role="alert" hidden></p>
+                <button type="submit" class="btn btn-danger">
+                  <span class="btn-label">Cerrar todas las sesiones</span><span class="spinner" aria-hidden="true"></span>
+                </button>
+              </form>
+            </article>
+          </div>
+
+          <p class="admin-foot-note"><svg><use href="#i-lock"></use></svg>Las claves nunca se muestran ni se guardan en esta página. Todo cambio se procesa en el servidor autenticado.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div class="toast-stack" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-scrim" data-modal-cancel></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-body">
+    <h2 id="modal-title">Confirmar</h2>
+    <p id="modal-body"></p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" data-modal-cancel>Cancelar</button>
+      <button type="button" class="btn btn-danger" id="modal-confirm">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
