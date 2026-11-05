@@ -68,6 +68,8 @@
     els.panelInicio = byId('panel-inicio');
     els.panelContent = byId('panel-content');
     els.panelAdmin = byId('panel-admin');
+    els.panelTasks = byId('panel-tareas');
+    els.tasksRoot = byId('tasks-root');
     els.stage = byId('stage');
 
     els.contentEyebrow = byId('content-eyebrow');
@@ -629,6 +631,7 @@
   }
 
   function teardownApp() {
+    clearTasks();
     stopExpiryWatch();
     clearSessionState();
     clearFrame();
@@ -767,7 +770,7 @@
       node.removeAttribute('aria-current');
     });
     if (pageKey) {
-      var target = document.querySelector('.nav-link[data-page="' + pageKey + '"]');
+      var target = document.querySelector('.nav-link[data-page="' + pageKey + '"], .nav-item[data-page="' + pageKey + '"]');
       if (target) {
         target.classList.add('is-active');
         target.setAttribute('aria-current', 'page');
@@ -787,7 +790,16 @@
     if (els.navAdmin) els.navAdmin.classList.remove('is-active');
   }
 
+  var tasksCleanup = null;
+  function clearTasks() {if(tasksCleanup){tasksCleanup();tasksCleanup=null;}if(els.tasksRoot)els.tasksRoot.textContent='';}
+  function openTasks() {
+    if(!state.token)return;state.page='tareas';showPanel('tasks');setActiveNav('tareas');renderBreadcrumbs({label:'Tareas'});closeDrawer(false);clearTasks();
+    if(!window.LupTasks){els.tasksRoot.textContent='No se pudo cargar Tareas. Recarga el portal.';return;}
+    var instance=window.LupTasks.mount({container:els.tasksRoot,role:state.role,api:function(action,payload){return callApi(action,{token:state.token,payload:payload||{}},30000).catch(function(e){if(e.status===401)handleSessionLoss('Tu sesión terminó.');throw e;});}});
+    tasksCleanup=typeof instance==='function'?instance:(instance&&typeof instance.destroy==='function'?function(){instance.destroy();}:null);focusStage();
+  }
   function showPanel(name) {
+    if(name!=='tasks')clearTasks();if(els.panelTasks)els.panelTasks.hidden=name!=='tasks';
     els.panelInicio.hidden = name !== 'inicio';
     els.panelContent.hidden = name !== 'content';
     els.panelAdmin.hidden = name !== 'admin';
@@ -1533,7 +1545,7 @@
         var pageKey = pageButton.getAttribute('data-page');
         if (!state.token) return;
         closeDrawer(false);
-        loadPage(pageKey);
+        if(pageKey==='tareas')openTasks();else loadPage(pageKey);
         return;
       }
 

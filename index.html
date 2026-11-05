@@ -14,6 +14,7 @@
 <link as="font" crossorigin="" href="assets/fuente_5.ttf" rel="preload" type="font/ttf"/>
 <link as="font" crossorigin="" href="assets/fuente_1.ttf" rel="preload" type="font/ttf"/>
 <link href="styles.css?v=20261105-tabla4" rel="stylesheet"/>
+<link rel="stylesheet" href="tasks.css?v=20261105-tareas1"/>
 </head>
 <body>
 <svg aria-hidden="true" class="sprite" focusable="false" height="0" width="0">
@@ -268,6 +269,7 @@
 </button>
 </div>
 </div>
+<button class="nav-item" data-page="tareas" type="button"><svg class="nav-icon"><use href="#i-doc"></use></svg><span class="nav-text">Tareas</span></button>
 </nav>
 <div class="side-foot">
 <button aria-haspopup="true" class="side-admin" id="nav-admin" type="button">
@@ -486,6 +488,7 @@
 <p><strong>Contenido privado.</strong> Las secciones se abren solo con tu sesión activa. Si la sesión expira, el portal te pedirá la clave nuevamente.</p>
 </div>
 </section>
+<section id="panel-tareas" class="panel panel-tareas" hidden aria-label="Tareas del equipo"><div id="tasks-root"></div></section>
 <!-- Contenido de página -->
 <section aria-labelledby="content-title" class="panel panel-content" hidden="" id="panel-content">
 <header class="content-head">
@@ -668,6 +671,7 @@
 </div>
 </div>
 </div>
-<script src="app.js?v=20261105-tabla4"></script>
+<script src="tasks.js?v=20261105-tareas1"></script>
+<script src="app.js?v=20261105-tareas1"></script>
 </body>
 </html>
