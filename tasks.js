@@ -7,7 +7,7 @@ function today(){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Santi
 function remaining(t,day){var d=t.due_date||t.scheduled_date;if(!d)return null;return Math.round((Date.parse(d+'T12:00Z')-Date.parse(day+'T12:00Z'))/86400000);}
 function effective(t,day){var n=remaining(t,day);return n!==null&&n<0&&t.status!=='finalizado'&&t.status!=='desechado'?'atrasada':t.status;}
 function unique(a){return a.filter(function(v,i){return v&&a.indexOf(v)===i;});}
-window.LupTasks={mount:function(options){var root=options.container,api=options.api,admin=options.role==='admin',alive=true,data={tasks:[],areas:[],assignees:[]},ownerFilter='',areaFilter='',dialog=null,loading=false;
+window.LupTasks={mount:function(options){var root=options.container,api=options.api,admin=['admin','viewer'].indexOf(options.role)!==-1,alive=true,data={tasks:[],areas:[],assignees:[]},ownerFilter='',areaFilter='',dialog=null,loading=false;
 root.classList.add('lup-tasks');
 function people(){return unique((data.assignees||data.owners||[]).concat(data.tasks.map(function(t){return t.owner||t.assignee;})));}
 function taskOwner(t){return t.owner||t.assignee||'';}
