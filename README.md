@@ -11,3 +11,8 @@ Proyecto y activos para LUP. La cuenta de alojamiento elegida por el propietario
 ## Operación
 
 El administrador define su propia clave mediante un enlace inicial de un solo uso. La clave de lectura del equipo es distinta. Ambas pueden cambiarse dentro de Administración. Las sesiones duran hasta ocho horas y pueden revocarse. No se deben publicar datos privados en este repositorio ni en GitHub Pages.
+
+
+## Gestión operativa del equipo
+
+La sección Tareas incorpora Owner, áreas configurables, fechas de realización y límite, estados y resúmenes por persona. Sus datos son independientes de los KPI y de los bonos. Administración edita y el perfil de lectura consulta. Las copias técnicas se conservan privadas, sin enlazarlas desde Inicio.
