@@ -1128,7 +1128,7 @@
     if (data && isNumber(data.achievedPercent)) {
       setStat(els.statAchieved, formatPercent(data.achievedPercent), false);
       setStatNote(els.statAchievedNote, validated !== null
-        ? 'Avance validado ' + formatPercent(validated) + '.'
+        ? 'Logro hasta hoy desde ' + from + (pendingWeight>0?' · '+formatPercent(pendingWeight)+' del peso pendiente de datos.':'.')
         : 'Sobre la meta del período.');
     } else {
       setStat(els.statAchieved, 'Pendiente', true);
