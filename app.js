@@ -88,6 +88,40 @@
     els.adminHours = byId('admin-hours');
     els.formRevoke = byId('form-revoke');
 
+    els.homeStats = byId('home-stats');
+    els.homePeriod = byId('home-period');
+    els.statDays = byId('stat-days');
+    els.statDaysNote = byId('stat-days-note');
+    els.statTime = byId('stat-time');
+    els.statTimeNote = byId('stat-time-note');
+    els.statAchieved = byId('stat-achieved');
+    els.statAchievedNote = byId('stat-achieved-note');
+    els.statBonus = byId('stat-bonus');
+    els.statBonusNote = byId('stat-bonus-note');
+    els.homeStatsNote = byId('home-stats-note');
+    els.homeBackupBlock = byId('home-backup-block');
+    els.homeBackup = byId('home-backup');
+
+    els.bonusMonth = byId('home-bonus-month');
+    els.bonusMonthTag = byId('bonus-month-tag');
+    els.bonusMonthStatus = byId('bonus-month-status');
+    els.bonusNetSales = byId('bonus-net-sales');
+    els.bonusNetSalesNote = byId('bonus-net-sales-note');
+    els.bonusProjectedSales = byId('bonus-projected-sales');
+    els.bonusProjectedSalesNote = byId('bonus-projected-sales-note');
+    els.bonusPace = byId('bonus-pace');
+    els.bonusPaceNote = byId('bonus-pace-note');
+    els.bonusWorkdays = byId('bonus-workdays');
+    els.bonusWorkdaysNote = byId('bonus-workdays-note');
+    els.bonusCurrent = byId('bonus-current');
+    els.bonusCurrentNote = byId('bonus-current-note');
+    els.bonusProjected = byId('bonus-projected');
+    els.bonusProjectedNote = byId('bonus-projected-note');
+    els.bonusTableWrap = byId('bonus-table-wrap');
+    els.bonusCaption = byId('bonus-caption');
+    els.bonusRows = byId('bonus-rows');
+    els.bonusLegend = byId('bonus-legend');
+
     els.toasts = byId('toasts');
     els.modal = byId('modal');
     els.modalTitle = byId('modal-title');
@@ -598,6 +632,7 @@
     clearSessionState();
     clearFrame();
     resetNavigation();
+    resetHomeStats();
     if (els.contentTitle) els.contentTitle.textContent = 'Metas';
     if (els.crumbs) els.crumbs.innerHTML = '<span class="crumb">LUP</span><span class="crumb-sep">/</span><span class="crumb crumb--now">Inicio</span>';
     setFrameState('loading');
@@ -672,7 +707,7 @@
       if (!html) throw new ApiError('Esta sección llegó sin contenido.', 0, 'empty');
 
       els.frame.removeAttribute('src');
-      els.frame.setAttribute('sandbox', 'allow-scripts allow-modals');
+      els.frame.setAttribute('sandbox', 'allow-scripts allow-modals allow-forms');
       els.frame.srcdoc = html;
       if (els.frame.dataset) els.frame.dataset.live = '0';
       els.frame.style.height = DEFAULT_FRAME_HEIGHT + 'px';
@@ -761,6 +796,409 @@
     }
   }
 
+  /* ---------- Inicio: pulso del período ----------
+     Los datos llegan del seguimiento autenticado (acción trackingGet).
+     Aquí no se guarda ningún valor de negocio: solo se pintan cifras
+     que el servidor entrega para la sesión activa. Si un cálculo aún no
+     está cerrado, se muestra "Pendiente" en lugar de un cero. */
+  var PERIOD_START_LABEL = '01/10/2026';
+  var PERIOD_END_LABEL = '31/03/2027';
+  var homeRequestSeq = 0;
+
+  function isNumber(value) {
+    return typeof value === 'number' && isFinite(value);
+  }
+
+  function formatDecimal(value, digits) {
+    var options = { minimumFractionDigits: 0, maximumFractionDigits: typeof digits === 'number' ? digits : 1 };
+    try {
+      return new Intl.NumberFormat('es-CL', options).format(value);
+    } catch (err) {
+      return String(Math.round(value * 10) / 10);
+    }
+  }
+
+  function formatPercent(value) {
+    return formatDecimal(value, 1) + '%';
+  }
+
+  function formatAmount(value) {
+    return '$' + formatDecimal(value, 0);
+  }
+
+  function formatDay(value) {
+    if (typeof value !== 'string') return '';
+    var match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+    if (match) return match[3] + '/' + match[2] + '/' + match[1];
+    return '';
+  }
+
+  function formatDays(value) {
+    var days = Math.round(value);
+    return days === 1 ? '1 día' : formatDecimal(days, 0) + ' días';
+  }
+
+  function setStat(node, text, pending) {
+    if (!node) return;
+    node.textContent = text;
+    node.classList.toggle('is-pending', Boolean(pending));
+  }
+
+  function setStatNote(node, text) {
+    if (node) node.textContent = text || '';
+  }
+
+  function homeState(name) {
+    if (els.homeStats) els.homeStats.setAttribute('data-state', name);
+  }
+
+  function homeNote(text) {
+    if (els.homeStatsNote) els.homeStatsNote.textContent = text || '';
+  }
+
+  function resetHomeStats() {
+    homeRequestSeq += 1;
+    homeState('loading');
+    setStat(els.statDays, '\u2014', true);
+    setStatNote(els.statDaysNote, 'Cierre ' + PERIOD_END_LABEL);
+    setStat(els.statTime, '\u2014', true);
+    setStatNote(els.statTimeNote, 'Base ' + PERIOD_START_LABEL);
+    setStat(els.statAchieved, '\u2014', true);
+    setStatNote(els.statAchievedNote, 'Se calcula con el seguimiento validado.');
+    setStat(els.statBonus, '\u2014', true);
+    setStatNote(els.statBonusNote, 'Monto vigente del período.');
+    if (els.homePeriod) els.homePeriod.textContent = PERIOD_START_LABEL + ' \u2013 ' + PERIOD_END_LABEL;
+    homeNote('Cargando el seguimiento del período\u2026');
+    if (els.homeBackupBlock) els.homeBackupBlock.hidden = true;
+    if (els.homeBackup) els.homeBackup.removeAttribute('href');
+    resetBonusPanel();
+  }
+
+  function safeBackupUrl(value) {
+    if (typeof value !== 'string' || !value) return '';
+    var url;
+    try { url = new URL(value); } catch (err) { return ''; }
+    /* Solo enlaces https: nunca javascript:, data: ni rutas locales. */
+    if (url.protocol !== 'https:') return '';
+    return url.href;
+  }
+
+  function renderHomeBackup(url) {
+    var safe = safeBackupUrl(url);
+    if (!safe) {
+      if (els.homeBackupBlock) els.homeBackupBlock.hidden = true;
+      if (els.homeBackup) els.homeBackup.removeAttribute('href');
+      return;
+    }
+    if (els.homeBackup) els.homeBackup.setAttribute('href', safe);
+    if (els.homeBackupBlock) els.homeBackupBlock.hidden = false;
+  }
+
+  /* ---------- Inicio: bono mensual proyectado ----------
+     El cálculo llega resuelto desde el servidor (trackingGet > data.monthlyBonus).
+     El cliente no calcula tramos ni proyecta ventas: solo pinta lo recibido.
+     Todo valor ausente se muestra como "Pendiente"; nunca se asume cero. */
+  var BONUS_PENDING = 'Pendiente';
+  var BONUS_DISCLAIMER = 'Cálculo estimado para seguimiento. La determinación y el pago definitivos se realizarán según el contrato y su Anexo A.';
+  var BONUS_DELTA_NOTE = 'Margen diario disponible sobre el ritmo actual; no es una recomendación de vender menos.';
+
+  function textOrPending(value) {
+    if (!isNumber(value)) return BONUS_PENDING;
+    return null;
+  }
+
+  function amountOrPending(value) {
+    return isNumber(value) ? formatAmount(value) : BONUS_PENDING;
+  }
+
+  function signedAmount(value) {
+    var rounded = Math.round(value);
+    return (rounded > 0 ? '+' : rounded < 0 ? '\u2212' : '') + formatAmount(Math.abs(rounded));
+  }
+
+  function bonusMonthLabel(month) {
+    if (typeof month !== 'string' || !/^\d{4}-\d{2}$/.test(month)) return '';
+    var names = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    var index = parseInt(month.slice(5, 7), 10) - 1;
+    if (!(index >= 0 && index < 12)) return '';
+    return names[index] + ' ' + month.slice(0, 4);
+  }
+
+  function setBonusFigure(valueNode, noteNode, text, note, pending) {
+    setStat(valueNode, text, Boolean(pending));
+    setStatNote(noteNode, note);
+  }
+
+  function setBonusState(name) {
+    if (els.bonusMonth) els.bonusMonth.setAttribute('data-state', name);
+  }
+
+  function bonusStatus(text) {
+    if (els.bonusMonthStatus) els.bonusMonthStatus.textContent = text || '';
+  }
+
+  function resetBonusPanel() {
+    setBonusState('loading');
+    if (els.bonusMonthTag) els.bonusMonthTag.textContent = 'Proyectado mes';
+    setBonusFigure(els.bonusNetSales, els.bonusNetSalesNote, '\u2014', 'Facturadas en el mes calendario.', true);
+    setBonusFigure(els.bonusProjectedSales, els.bonusProjectedSalesNote, '\u2014', 'Estimación al cierre del mes.', true);
+    setBonusFigure(els.bonusPace, els.bonusPaceNote, '\u2014', 'Venta neta por día hábil.', true);
+    setBonusFigure(els.bonusWorkdays, els.bonusWorkdaysNote, '\u2014', 'Transcurridos y restantes.', true);
+    setBonusFigure(els.bonusCurrent, els.bonusCurrentNote, '\u2014', 'Tramo de las ventas netas registradas.', true);
+    setBonusFigure(els.bonusProjected, els.bonusProjectedNote, '\u2014', 'Según el tramo estimado al cierre.', true);
+    if (els.bonusRows) els.bonusRows.innerHTML = '';
+    if (els.bonusTableWrap) els.bonusTableWrap.hidden = true;
+    if (els.bonusLegend) els.bonusLegend.hidden = true;
+    if (els.bonusCaption) els.bonusCaption.textContent = 'Tramos de venta neta mensual y bono bruto según el Anexo A.';
+    bonusStatus('Cargando el bono mensual del período\u2026');
+  }
+
+  function tierRangeText(tier) {
+    var min = isNumber(tier.min) ? tier.min : null;
+    var max = isNumber(tier.max) ? tier.max : null;
+    if (min === null && max === null) return BONUS_PENDING;
+    if (min === null) return 'Hasta ' + formatAmount(max);
+    if (max === null) return formatAmount(min) + ' o más';
+    return formatAmount(min) + ' \u2013 ' + formatAmount(max);
+  }
+
+  function tierBonusText(tier) {
+    if (!isNumber(tier.bonus)) return BONUS_PENDING;
+    return tier.bonus === 0 ? '$0' : formatAmount(tier.bonus);
+  }
+
+  function tierPaceText(value) {
+    if (!isNumber(value)) return BONUS_PENDING;
+    return formatAmount(value) + '/día';
+  }
+
+  /* Positiva: todavía hay que aumentar el ritmo. Negativa: margen diario que
+     el tramo admite. Nunca se redacta como sugerencia de vender menos. */
+  function tierDeltaText(value) {
+    if (!isNumber(value)) return BONUS_PENDING;
+    var rounded = Math.round(value);
+    if (rounded > 0) return 'Aumentar ' + signedAmount(rounded) + '/día';
+    if (rounded < 0) return 'Puede caer ' + signedAmount(rounded) + '/día';
+    return 'Mantener el ritmo';
+  }
+
+  function tierFlags(tier) {
+    var status = typeof tier.status === 'string' ? tier.status.toLowerCase() : '';
+    var projected = tier.projected === true || status === 'projected' || status === 'proyectado' || status === 'proyeccion';
+    var reached = tier.current === true || status === 'current' || status === 'reached' || status === 'alcanzado' || status === 'acumulado';
+    return { projected: projected, reached: reached };
+  }
+
+  function bonusCell(text, className) {
+    var cell = document.createElement('td');
+    if (className) cell.className = className;
+    cell.textContent = text;
+    return cell;
+  }
+
+  function renderBonusRows(tiers) {
+    var body = els.bonusRows;
+    if (!body) return false;
+    body.innerHTML = '';
+    if (!tiers || !tiers.length) return false;
+
+    tiers.forEach(function (tier) {
+      if (!tier || typeof tier !== 'object') return;
+      var flags = tierFlags(tier);
+      var row = document.createElement('tr');
+      if (flags.reached) row.className = 'is-reached';
+      if (flags.projected) row.className = (row.className ? row.className + ' ' : '') + 'is-projected';
+
+      var rangeCell = document.createElement('td');
+      rangeCell.className = 'bonus-range';
+      var range = document.createElement('span');
+      range.textContent = tierRangeText(tier);
+      rangeCell.appendChild(range);
+      if (flags.reached) {
+        var tag = document.createElement('span');
+        tag.className = 'bonus-tag';
+        tag.textContent = 'En lo que va';
+        rangeCell.appendChild(tag);
+      }
+      row.appendChild(rangeCell);
+
+      row.appendChild(bonusCell(tierBonusText(tier), 'bonus-amount'));
+
+      var paceCell = bonusCell(tierPaceText(tier.neededDaily), 'bonus-pace');
+      row.appendChild(paceCell);
+
+      var delta = tier.deltaDaily;
+      var deltaCell = bonusCell(tierDeltaText(delta), 'bonus-delta');
+      if (isNumber(delta)) {
+        var rounded = Math.round(delta);
+        deltaCell.className += rounded > 0 ? ' is-up' : rounded < 0 ? ' is-down' : ' is-flat';
+        deltaCell.title = BONUS_DELTA_NOTE;
+      }
+      row.appendChild(deltaCell);
+
+      body.appendChild(row);
+    });
+
+    return body.children.length > 0;
+  }
+
+  function renderMonthlyBonus(bonus) {
+    var b = bonus && typeof bonus === 'object' && !Array.isArray(bonus) ? bonus : null;
+    resetBonusPanel();
+
+    if (!b) {
+      setBonusState('empty');
+      setBonusFigure(els.bonusNetSales, els.bonusNetSalesNote, BONUS_PENDING, 'Facturadas en el mes calendario.', true);
+      setBonusFigure(els.bonusProjectedSales, els.bonusProjectedSalesNote, BONUS_PENDING, 'Estimación al cierre del mes.', true);
+      setBonusFigure(els.bonusPace, els.bonusPaceNote, BONUS_PENDING, 'Venta neta por día hábil.', true);
+      setBonusFigure(els.bonusWorkdays, els.bonusWorkdaysNote, BONUS_PENDING, 'Transcurridos y restantes.', true);
+      setBonusFigure(els.bonusCurrent, els.bonusCurrentNote, BONUS_PENDING, 'Tramo de las ventas netas registradas.', true);
+      setBonusFigure(els.bonusProjected, els.bonusProjectedNote, BONUS_PENDING, 'Según el tramo estimado al cierre.', true);
+      bonusStatus(BONUS_DISCLAIMER);
+      return;
+    }
+
+    var monthLabel = bonusMonthLabel(b.month);
+    if (els.bonusMonthTag) els.bonusMonthTag.textContent = monthLabel ? 'Proyectado mes \u00b7 ' + monthLabel : 'Proyectado mes';
+
+    var elapsed = isNumber(b.elapsedWorkdays) ? b.elapsedWorkdays : null;
+    var remaining = isNumber(b.remainingWorkdays) ? b.remainingWorkdays : null;
+    var workdaysText = BONUS_PENDING;
+    var workdaysNote = 'Días hábiles transcurridos y restantes del mes.';
+    if (elapsed !== null || remaining !== null) {
+      workdaysText = (elapsed !== null ? formatDecimal(elapsed, 0) : BONUS_PENDING) + ' / ' +
+        (remaining !== null ? formatDecimal(remaining, 0) : BONUS_PENDING);
+      workdaysNote = 'Transcurridos / restantes.';
+    }
+
+    setBonusFigure(els.bonusNetSales, els.bonusNetSalesNote, amountOrPending(b.netSales),
+      monthLabel ? 'Netas facturadas en ' + monthLabel + '.' : 'Netas facturadas en el mes calendario.', !isNumber(b.netSales));
+    setBonusFigure(els.bonusProjectedSales, els.bonusProjectedSalesNote,
+      amountOrPending(b.projectedSales), 'Estimación al cierre del mes.', !isNumber(b.projectedSales));
+    setBonusFigure(els.bonusPace, els.bonusPaceNote,
+      isNumber(b.pace) ? formatAmount(b.pace) + '/día' : BONUS_PENDING, 'Venta neta por día hábil.', !isNumber(b.pace));
+    setBonusFigure(els.bonusWorkdays, els.bonusWorkdaysNote, workdaysText, workdaysNote, elapsed === null && remaining === null);
+    setBonusFigure(els.bonusCurrent, els.bonusCurrentNote,
+      amountOrPending(b.currentBonus), 'Tramo de las ventas netas registradas.', !isNumber(b.currentBonus));
+    setBonusFigure(els.bonusProjected, els.bonusProjectedNote,
+      amountOrPending(b.projectedBonus), 'Según el tramo estimado al cierre.', !isNumber(b.projectedBonus));
+
+    var hasRows = renderBonusRows(Array.isArray(b.tiers) ? b.tiers : []);
+    if (els.bonusTableWrap) els.bonusTableWrap.hidden = !hasRows;
+    if (els.bonusLegend) els.bonusLegend.hidden = !hasRows;
+    if (hasRows && monthLabel && els.bonusCaption) {
+      els.bonusCaption.textContent = 'Tramos de venta neta mensual y bono bruto según el Anexo A \u00b7 ' + monthLabel + '.';
+    }
+
+    setBonusState(hasRows || isNumber(b.netSales) ? 'ok' : 'empty');
+    bonusStatus(cleanText(b.message) || 'Datos operacionales estimados del mes en curso, sujetos a posibles cambios contables.');
+  }
+
+  function renderHome(home, backupUrl, monthlyBonus) {
+    var data = home && typeof home === 'object' ? home : null;
+    homeState('ok');
+
+    var from = formatDay(data && data.startDate) || PERIOD_START_LABEL;
+    var to = formatDay(data && data.endDate) || PERIOD_END_LABEL;
+    if (els.homePeriod) els.homePeriod.textContent = from + ' \u2013 ' + to;
+
+    /* Días restantes al cierre del período. */
+    if (data && isNumber(data.daysRemaining)) {
+      setStat(els.statDays, formatDays(data.daysRemaining), false);
+      setStatNote(els.statDaysNote, 'Cierre ' + to);
+    } else {
+      setStat(els.statDays, 'Pendiente', true);
+      setStatNote(els.statDaysNote, 'Cierre ' + to);
+    }
+
+    /* Tiempo transcurrido, con la fecha base explícita. */
+    if (data && isNumber(data.elapsedPercent)) {
+      setStat(els.statTime, formatPercent(data.elapsedPercent), false);
+      setStatNote(els.statTimeNote, 'Base ' + from + ' al ' + to);
+    } else {
+      setStat(els.statTime, 'Pendiente', true);
+      setStatNote(els.statTimeNote, 'Base ' + from + ' al ' + to);
+    }
+
+    /* Avance logrado. Sin cálculo cerrado no se asume cero. */
+    var validated = data && isNumber(data.validatedPercent) ? data.validatedPercent : null;
+    var pendingWeight = data && isNumber(data.pendingWeight) ? data.pendingWeight : null;
+    if (data && isNumber(data.achievedPercent)) {
+      setStat(els.statAchieved, formatPercent(data.achievedPercent), false);
+      setStatNote(els.statAchievedNote, validated !== null
+        ? 'Avance validado ' + formatPercent(validated) + '.'
+        : 'Sobre la meta del período.');
+    } else {
+      setStat(els.statAchieved, 'Pendiente', true);
+      var parts = [];
+      if (validated !== null) parts.push('Avance validado ' + formatPercent(validated));
+      if (pendingWeight !== null) parts.push(formatPercent(pendingWeight) + ' del peso sin validar');
+      setStatNote(els.statAchievedNote, parts.length
+        ? parts.join(' \u00b7 ') + '.'
+        : 'El avance se cierra cuando el seguimiento valida los indicadores.');
+    }
+
+    /* Bono anual estimado. Un cero es un valor válido si el servidor lo
+       entrega validado; sin cifra se muestra "Pendiente", nunca cero.
+       El tope anual solo se rotula si el servidor lo entrega: la interfaz
+       pública no lleva remuneraciones escritas. */
+    var annualTarget = data && isNumber(data.annualTarget) ? data.annualTarget : null;
+    var annualBase = annualTarget !== null
+      ? 'Referencia anual al 100% ' + formatAmount(annualTarget) + '.'
+      : 'Monto estimado del período.';
+    if (data && isNumber(data.bonusAmount)) {
+      setStat(els.statBonus, formatAmount(data.bonusAmount), false);
+      setStatNote(els.statBonusNote, cleanText(data.bonusMessage) || annualBase);
+    } else {
+      setStat(els.statBonus, BONUS_PENDING, true);
+      setStatNote(els.statBonusNote, cleanText(data && data.bonusMessage)
+        || 'Sin cifra validada' + (annualTarget !== null ? ' · tope ' + formatAmount(annualTarget) : '') + '.');
+    }
+
+    /* Bono mensual proyectado: bloque propio de la respuesta autenticada. */
+    renderMonthlyBonus(monthlyBonus || (data && data.monthlyBonus));
+
+    homeNote('Datos del seguimiento privado. Se actualizan desde el servidor autenticado.');
+
+    renderHomeBackup(backupUrl || (data && data.backupUrl));
+  }
+
+  function loadHome() {
+    if (!state.token) return;
+    var seq = ++homeRequestSeq;
+    var token = state.token;
+    homeState('loading');
+    homeNote('Cargando el seguimiento del período\u2026');
+
+    callApi('trackingGet', { token: token }, 30000).then(function (data) {
+      if (seq !== homeRequestSeq || state.token !== token) return;
+      /* El backend entrega home={...} y monthlyBonus; si llegara aplanado, se tolera igual. */
+      var home = data.home || data;
+      renderHome(home, data.backupUrl, data.monthlyBonus || (home && home.monthlyBonus));
+    }).catch(function (err) {
+      if (seq !== homeRequestSeq || state.token !== token) return;
+      if (err && err.status === 401) {
+        handleSessionLoss('Tu sesión terminó. Ingresa tu clave nuevamente.');
+        return;
+      }
+      homeState('error');
+      setStat(els.statDays, 'No disponible', true);
+      setStat(els.statTime, 'No disponible', true);
+      setStat(els.statAchieved, 'No disponible', true);
+      setStat(els.statBonus, 'No disponible', true);
+      homeNote(err && err.message ? err.message : 'No pudimos cargar el seguimiento del período.');
+      setBonusState('error');
+      setBonusFigure(els.bonusNetSales, els.bonusNetSalesNote, 'No disponible', 'Facturadas en el mes calendario.', true);
+      setBonusFigure(els.bonusProjectedSales, els.bonusProjectedSalesNote, 'No disponible', 'Estimación al cierre del mes.', true);
+      setBonusFigure(els.bonusPace, els.bonusPaceNote, 'No disponible', 'Venta neta por día hábil.', true);
+      setBonusFigure(els.bonusWorkdays, els.bonusWorkdaysNote, 'No disponible', 'Transcurridos y restantes.', true);
+      setBonusFigure(els.bonusCurrent, els.bonusCurrentNote, 'No disponible', 'Tramo de las ventas netas registradas.', true);
+      setBonusFigure(els.bonusProjected, els.bonusProjectedNote, 'No disponible', 'Según el tramo estimado al cierre.', true);
+      bonusStatus('Bono mensual: no disponible con la sesión actual.');
+      renderHomeBackup('');
+    });
+  }
+
   function goHome() {
     state.page = null;
     clearFrame();
@@ -769,6 +1207,9 @@
     renderHomeCrumbs();
     showPanel('inicio');
     focusStage();
+    if (!state.token) return;
+    resetHomeStats();
+    loadHome();
   }
 
   function openAdmin() {
@@ -842,6 +1283,17 @@
     if (event.source !== els.frame.contentWindow) return;
     var data = event.data;
     if (!data || typeof data !== 'object') return;
+    if (data.type === 'lup:tracking:request') {
+      var allowed = ['trackingGet','milestoneAdd','milestoneToggle','milestoneEdit','milestoneRemove'];
+      if (!state.token || state.page !== 'seguimiento2026' || allowed.indexOf(data.action) < 0 || typeof data.requestId !== 'string' || data.requestId.length > 100) return;
+      var target = event.source, session = state.token;
+      callApi(data.action,{token:session,payload:data.payload || {}}).then(function(result){
+        if (state.token === session && target === els.frame.contentWindow) target.postMessage({type:'lup:tracking:response',requestId:data.requestId,ok:true,data:result.data || result},'*');
+      }).catch(function(error){
+        if (state.token === session && target === els.frame.contentWindow) target.postMessage({type:'lup:tracking:response',requestId:data.requestId,ok:false,error:error.message || 'No se pudo actualizar el seguimiento.'},'*');
+      });
+      return;
+    }
     if (data.type === 'lup:download') {
       if (state.token && (data.file === 'carta' || data.file === 'kpiPDF')) {
         var button = document.querySelector('[data-download="' + data.file + '"]');
@@ -1199,4 +1651,5 @@
   } else {
     boot();
   }
+setInterval(function(){if(state.token && state.page === null && document.visibilityState !== 'hidden') loadHome();},300000);
 })();

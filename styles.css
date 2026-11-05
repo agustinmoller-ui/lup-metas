@@ -1041,6 +1041,391 @@ svg { width: 20px; height: 20px; flex: none; }
 .notice p { font-size: 12px; line-height: 1.65; color: var(--muted); }
 .notice strong { color: var(--navy); }
 
+/* Inicio · pulso del período */
+.home-pulse {
+  margin-top: 18px;
+  padding: 20px 20px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+.home-pulse-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.home-period {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.stat-card {
+  min-width: 0;
+  padding: 15px 16px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.stat-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.stat-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 9px;
+  background: var(--lima-soft);
+  color: var(--verde);
+}
+.stat-icon svg { width: 15px; height: 15px; }
+.stat-icon--navy { background: #e9eef9; color: var(--navy); }
+.stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.stat-value {
+  font: 700 clamp(26px, 3vw, 32px)/1.05 var(--font-head);
+  letter-spacing: -.01em;
+  color: var(--navy);
+  overflow-wrap: break-word;
+}
+.stat-value.is-pending {
+  font-size: 18px;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+.stat-note {
+  margin-top: 7px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.home-pulse[data-state="loading"] .stat-value { color: var(--muted-soft); }
+.home-pulse[data-state="error"] .stat-value { color: var(--muted-soft); }
+.home-pulse-note {
+  margin-top: 12px;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.home-pulse[data-state="error"] .home-pulse-note { color: var(--danger); }
+.home-backup {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  margin-top: 16px;
+  padding-top: 15px;
+  border-top: 1px solid var(--line);
+}
+.home-backup > svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  margin-top: 2px;
+  color: var(--navy);
+}
+.home-backup-copy p { font-size: 11.5px; line-height: 1.6; color: var(--muted); }
+.home-backup-copy strong { color: var(--navy); }
+.home-backup-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 9px;
+  padding: 8px 13px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--crema);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--navy);
+  transition: border-color .18s ease, background .18s ease;
+}
+.home-backup-link:hover { background: #fff; border-color: #b9c3b6; }
+.home-backup-link svg { width: 14px; height: 14px; }
+.home-backup-note { margin-top: 7px; font-size: 10.5px; line-height: 1.55; color: var(--muted-soft); }
+
+/* Inicio · bono mensual proyectado */
+.bonus-month {
+  margin-top: 18px;
+  padding: 20px 20px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+.bonus-month-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.bonus-month-heading { min-width: 0; }
+.bonus-month-title {
+  font: 700 clamp(21px, 2.4vw, 25px)/1.15 var(--font-head);
+  letter-spacing: -.01em;
+  color: var(--navy);
+  margin-top: 4px;
+}
+.bonus-month-sub {
+  margin-top: 6px;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.bonus-month-tag {
+  flex: none;
+  padding: 5px 11px;
+  border: 1px solid #cbd8ef;
+  border-radius: 999px;
+  background: #eef3fb;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--navy);
+  white-space: nowrap;
+}
+.bonus-figures {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.bonus-figure {
+  min-width: 0;
+  padding: 12px 13px 11px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.bonus-figure--projected {
+  border-color: #bcd88f;
+  background: var(--lima-soft);
+}
+.bonus-figure-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.bonus-figure-value {
+  margin-top: 6px;
+  font: 700 clamp(19px, 2.2vw, 24px)/1.1 var(--font-head);
+  letter-spacing: -.01em;
+  color: var(--navy);
+  overflow-wrap: break-word;
+}
+.bonus-figure-value.is-pending {
+  font: 700 14px/1.3 var(--font-body);
+  letter-spacing: 0;
+  color: var(--muted);
+}
+.bonus-figure-note {
+  margin-top: 5px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.bonus-month-status {
+  margin-top: 12px;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.bonus-month[data-state="error"] .bonus-month-status { color: var(--danger); }
+.bonus-month[data-state="loading"] .bonus-figure-value { color: var(--muted-soft); }
+.bonus-table-wrap {
+  margin-top: 14px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.bonus-table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.bonus-caption {
+  padding: 10px 13px 8px;
+  text-align: left;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.bonus-table thead th {
+  padding: 8px 13px;
+  border-bottom: 1px solid var(--line-strong);
+  background: var(--crema);
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.bonus-table tbody td {
+  padding: 9px 13px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  vertical-align: middle;
+}
+.bonus-table tbody tr:last-child td { border-bottom: 0; }
+.bonus-range {
+  display: table-cell;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  font-weight: 600;
+  color: var(--navy);
+  white-space: nowrap;
+}
+.bonus-amount { font-weight: 700; color: var(--navy); white-space: nowrap; }
+.bonus-pace { color: var(--muted); white-space: nowrap; }
+.bonus-delta { white-space: nowrap; }
+.bonus-delta.is-up { color: var(--danger); font-weight: 600; }
+.bonus-delta.is-down { color: var(--verde-mid); font-weight: 600; }
+.bonus-delta.is-flat { color: var(--muted); }
+/* Fila alcanzada con el acumulado: etiqueta azul. */
+.bonus-table tbody tr.is-reached td { background: #f2f6fd; }
+.bonus-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--navy);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #fff;
+  white-space: nowrap;
+}
+/* Fila proyectada del mes: color lima, por encima de la fila alcanzada. */
+.bonus-table tbody tr.is-projected td {
+  background: var(--lima);
+  box-shadow: inset 0 1px 0 #b4d97a, inset 0 -1px 0 #b4d97a;
+}
+.bonus-table tbody tr.is-projected td,
+.bonus-table tbody tr.is-projected .bonus-pace,
+.bonus-table tbody tr.is-projected .bonus-range,
+.bonus-table tbody tr.is-projected .bonus-amount { color: var(--navy-deep); }
+.bonus-table tbody tr.is-projected .bonus-delta.is-down { color: var(--verde); }
+.bonus-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.bonus-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.bonus-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  flex: none;
+  border-radius: 4px;
+}
+.bonus-swatch--lime { background: var(--lima); border: 1px solid #b4d97a; }
+.bonus-swatch--blue { background: var(--navy); }
+.bonus-legend-note {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--muted-soft);
+}
+.bonus-disclaimer {
+  margin-top: 12px;
+  padding-top: 11px;
+  border-top: 1px solid var(--line);
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.bonus-details { margin-top: 9px; }
+.bonus-details summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--navy);
+  cursor: pointer;
+  list-style: none;
+}
+.bonus-details summary::-webkit-details-marker { display: none; }
+.bonus-details summary::before {
+  content: '+';
+  display: inline-grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+  background: var(--crema);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+.bonus-details[open] summary::before { content: '\2212'; }
+.bonus-details summary:hover { text-decoration: underline; }
+.bonus-details-list {
+  margin-top: 8px;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--crema);
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.bonus-details-list dt {
+  margin-top: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+.bonus-details-list dt:first-child { margin-top: 0; }
+.bonus-details-list dd { margin: 2px 0 0; }
+
+@media (max-width: 900px) {
+  .bonus-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .bonus-month { padding: 16px 14px 15px; }
+  .bonus-figures { grid-template-columns: 1fr; }
+  .bonus-month-head { align-items: flex-start; }
+  .bonus-table { min-width: 460px; }
+}
+
 /* Cabecera de contenido */
 .content-head {
   display: flex;
@@ -1463,6 +1848,17 @@ svg { width: 20px; height: 20px; flex: none; }
   .modal { padding: 14px; }
   .modal-actions { flex-direction: column-reverse; }
   .modal-actions .btn { width: 100%; }
+}
+
+/* Inicio: tarjetas del período */
+@media (max-width: 1180px) {
+  .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .home-pulse { padding: 16px 14px 15px; }
+  .stat-grid { grid-template-columns: 1fr; }
+  .stat-value { font-size: 27px; }
+  .home-pulse-head { align-items: flex-start; }
 }
 
 /* =========================================================

@@ -13,7 +13,7 @@
 <link href="assets/logo_lup.png" rel="icon" type="image/png"/>
 <link as="font" crossorigin="" href="assets/fuente_5.ttf" rel="preload" type="font/ttf"/>
 <link as="font" crossorigin="" href="assets/fuente_1.ttf" rel="preload" type="font/ttf"/>
-<link href="styles.css" rel="stylesheet"/>
+<link href="styles.css?v=20261105-bono" rel="stylesheet"/>
 </head>
 <body>
 <svg aria-hidden="true" class="sprite" focusable="false" height="0" width="0">
@@ -331,6 +331,141 @@
 <img alt="" src="assets/logo_lup.png"/>
 </div>
 </div>
+<div class="home-pulse" data-state="loading" id="home-stats">
+<div class="home-pulse-head">
+<p class="eyebrow"><span></span>Pulso del período</p>
+<p class="home-period" id="home-period">Período del seguimiento</p>
+</div>
+<div class="stat-grid">
+<article class="stat-card">
+<div class="stat-head">
+<span class="stat-icon stat-icon--navy"><svg><use href="#i-calendar"></use></svg></span>
+<p class="stat-label">Días restantes</p>
+</div>
+<p class="stat-value is-pending" id="stat-days">&#8212;</p>
+<p class="stat-note" id="stat-days-note">Cierre 31/03/2027</p>
+</article>
+<article class="stat-card">
+<div class="stat-head">
+<span class="stat-icon"><svg><use href="#i-chart"></use></svg></span>
+<p class="stat-label">Tiempo transcurrido</p>
+</div>
+<p class="stat-value is-pending" id="stat-time">&#8212;</p>
+<p class="stat-note" id="stat-time-note">Base 01/10/2026</p>
+</article>
+<article class="stat-card">
+<div class="stat-head">
+<span class="stat-icon"><svg><use href="#i-target"></use></svg></span>
+<p class="stat-label">Avance logrado</p>
+</div>
+<p class="stat-value is-pending" id="stat-achieved">&#8212;</p>
+<p class="stat-note" id="stat-achieved-note">Se calcula con el seguimiento validado.</p>
+</article>
+<article class="stat-card">
+<div class="stat-head">
+<span class="stat-icon"><svg><use href="#i-shield"></use></svg></span>
+<p class="stat-label">Bono anual estimado</p>
+</div>
+<p class="stat-value is-pending" id="stat-bonus">&#8212;</p>
+<p class="stat-note" id="stat-bonus-note">Monto estimado del período.</p>
+</article>
+</div>
+<p aria-live="polite" class="home-pulse-note" id="home-stats-note" role="status">Cargando el seguimiento del período&#8230;</p>
+<div class="home-backup" hidden="" id="home-backup-block">
+<svg><use href="#i-doc"></use></svg>
+<div class="home-backup-copy">
+<p><strong>Respaldo en Sheets.</strong> Copia del seguimiento del período en Google Sheets.</p>
+<a class="home-backup-link" id="home-backup" rel="noopener noreferrer" target="_blank"><span>Abrir respaldo en Sheets</span><svg><use href="#i-chevron"></use></svg></a>
+<p class="home-backup-note">El enlace se abre con los permisos de tu propia cuenta de Google. El portal no comparte archivos por ti: el acceso depende de Drive.</p>
+</div>
+</div>
+</div>
+<section aria-labelledby="bono-mensual-title" class="bonus-month" data-state="loading" id="home-bonus-month">
+<div class="bonus-month-head">
+<div class="bonus-month-heading">
+<p class="eyebrow"><span></span>Bono mensual</p>
+<h2 class="bonus-month-title" id="bono-mensual-title">Bono mensual proyectado</h2>
+<p class="bonus-month-sub" id="bonus-month-sub">Proyectado mes · datos operacionales estimados y posibles cambios contables.</p>
+</div>
+<p class="bonus-month-tag" id="bonus-month-tag">Proyectado mes</p>
+</div>
+<div class="bonus-figures">
+<div class="bonus-figure">
+<p class="bonus-figure-label">Ventas netas del mes</p>
+<p class="bonus-figure-value" id="bonus-net-sales">&#8212;</p>
+<p class="bonus-figure-note" id="bonus-net-sales-note">Facturadas en el mes calendario.</p>
+</div>
+<div class="bonus-figure">
+<p class="bonus-figure-label">Proyección de ventas</p>
+<p class="bonus-figure-value" id="bonus-projected-sales">&#8212;</p>
+<p class="bonus-figure-note" id="bonus-projected-sales-note">Estimación al cierre del mes.</p>
+</div>
+<div class="bonus-figure">
+<p class="bonus-figure-label">Ritmo diario actual</p>
+<p class="bonus-figure-value" id="bonus-pace">&#8212;</p>
+<p class="bonus-figure-note" id="bonus-pace-note">Venta neta por día hábil.</p>
+</div>
+<div class="bonus-figure">
+<p class="bonus-figure-label">Días hábiles del mes</p>
+<p class="bonus-figure-value" id="bonus-workdays">&#8212;</p>
+<p class="bonus-figure-note" id="bonus-workdays-note">Transcurridos y restantes.</p>
+</div>
+<div class="bonus-figure">
+<p class="bonus-figure-label">Bono acumulado a hoy</p>
+<p class="bonus-figure-value" id="bonus-current">&#8212;</p>
+<p class="bonus-figure-note" id="bonus-current-note">Tramo de las ventas netas registradas.</p>
+</div>
+<div class="bonus-figure bonus-figure--projected">
+<p class="bonus-figure-label">Bono proyectado del mes</p>
+<p class="bonus-figure-value" id="bonus-projected">&#8212;</p>
+<p class="bonus-figure-note" id="bonus-projected-note">Según el tramo estimado al cierre.</p>
+</div>
+</div>
+<p aria-live="polite" class="bonus-month-status" id="bonus-month-status" role="status">Cargando el bono mensual del período&#8230;</p>
+<div class="bonus-table-wrap" id="bonus-table-wrap" hidden="">
+<table class="bonus-table">
+<caption class="bonus-caption" id="bonus-caption">Tramos de venta neta mensual y bono bruto según el Anexo A.</caption>
+<thead>
+<tr>
+<th scope="col">Ventas netas</th>
+<th scope="col">Bono bruto</th>
+<th scope="col">Ritmo diario mínimo</th>
+<th scope="col">Variación vs ritmo actual</th>
+</tr>
+</thead>
+<tbody id="bonus-rows"></tbody>
+</table>
+</div>
+<p class="bonus-legend" hidden="" id="bonus-legend">
+<span class="bonus-legend-item"><span aria-hidden="true" class="bonus-swatch bonus-swatch--lime"></span>Fila proyectada del mes</span>
+<span class="bonus-legend-item"><span aria-hidden="true" class="bonus-swatch bonus-swatch--blue"></span>Tramo ya alcanzado con el acumulado</span>
+</p>
+<p class="bonus-legend-note">«Puede caer» indica el margen diario que todavía sostiene el tramo. No es una recomendación de vender menos.</p>
+<p class="bonus-disclaimer">Cálculo estimado para seguimiento. La determinación y el pago definitivos se realizarán según el contrato y su Anexo A.</p>
+<details class="bonus-details">
+<summary>Anexo A · cómo se miden las ventas y cómo se paga</summary>
+<dl class="bonus-details-list">
+<dt>Ventas netas</dt>
+<dd>Ventas netas facturadas en el mes calendario.</dd>
+<dt>Base de cálculo</dt>
+<dd>Netas de IVA, descuentos, devoluciones y notas de crédito, según la contabilidad y el estado de resultados.</dd>
+<dt>Fuente</dt>
+<dd>Sistema contable y control de gestión de LUP.</dd>
+<dt>Cierre</dt>
+<dd>Cierre contable entre los días 1 y 10 del mes siguiente.</dd>
+<dt>Detalle</dt>
+<dd>Detalle disponible hasta el día 15.</dd>
+<dt>Observaciones</dt>
+<dd>El trabajador puede presentar observaciones escritas hasta el día 20.</dd>
+<dt>Pago</dt>
+<dd>Último día hábil del mes siguiente.</dd>
+<dt>Fin de la relación</dt>
+<dd>Los meses medidos y no pagados se pagan según el Anexo A, en el finiquito.</dd>
+<dt>Discrepancias</dt>
+<dd>Se resuelven en el calendario acordado con la administración y con el respaldo correspondiente.</dd>
+</dl>
+</details>
+</section>
 <div class="quick-grid">
 <button class="quick-card" data-page="metas2026" type="button">
 <span class="quick-icon"><svg><use href="#i-calendar"></use></svg></span>
@@ -378,7 +513,7 @@
 <div class="sk sk-block"></div>
 </div>
 </div>
-<iframe class="content-frame" id="content-frame" referrerpolicy="no-referrer" sandbox="allow-scripts allow-modals" title="Contenido del portal"></iframe>
+<iframe class="content-frame" id="content-frame" referrerpolicy="no-referrer" sandbox="allow-scripts allow-modals allow-forms" title="Contenido del portal"></iframe>
 <div class="frame-error" id="frame-error" role="alert">
 <span class="frame-error-icon"><svg><use href="#i-alert"></use></svg></span>
 <h2>No pudimos abrir esta sección</h2>
@@ -535,6 +670,6 @@
 </div>
 </div>
 </div>
-<script src="app.js"></script>
+<script src="app.js?v=20261105-bono"></script>
 </body>
 </html>
