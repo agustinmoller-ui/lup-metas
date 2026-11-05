@@ -1279,6 +1279,10 @@
     }
   }
 
+  var stickyTick=false;
+  function syncTrackingSticky(){stickyTick=false;if(!els.frame||state.page!=='seguimiento2026'||!els.frame.contentWindow)return;var top=document.querySelector('.topbar'),r=els.frame.getBoundingClientRect(),edge=top?Math.max(0,top.getBoundingClientRect().bottom):0;els.frame.contentWindow.postMessage({type:'lup:sticky-offset',offset:Math.max(0,edge-r.top)},'*');}
+  function requestTrackingSticky(){if(!stickyTick){stickyTick=true;requestAnimationFrame(syncTrackingSticky);}}
+  window.addEventListener('scroll',requestTrackingSticky,{passive:true,capture:true});window.addEventListener('resize',requestTrackingSticky,{passive:true});
   /* ---------- Altura del iframe por postMessage ---------- */
   function onMessage(event) {
     if (!els.frame) return;
@@ -1289,7 +1293,7 @@
       var allowed = ['trackingGet','milestoneAdd','milestoneToggle','milestoneEdit','milestoneRemove','bonusWorkdaysSet'];
       if (!state.token || state.page !== 'seguimiento2026' || allowed.indexOf(data.action) < 0 || typeof data.requestId !== 'string' || data.requestId.length > 100) return;
       var target = event.source, session = state.token;
-      callApi(data.action,{token:session,payload:data.payload || {}}).then(function(result){
+      callApi(data.action,{token:session,payload:data.payload || {},fast:data.fast===true}).then(function(result){
         if (state.token === session && target === els.frame.contentWindow) target.postMessage({type:'lup:tracking:response',requestId:data.requestId,ok:true,data:result.data || result},'*');
       }).catch(function(error){
         if (state.token === session && target === els.frame.contentWindow) target.postMessage({type:'lup:tracking:response',requestId:data.requestId,ok:false,error:error.message || 'No se pudo actualizar el seguimiento.'},'*');
@@ -1308,7 +1312,7 @@
     if (!isFinite(height) || height <= 0) return;
     if (els.frameShell.getAttribute('data-state') !== 'ready') return;
     if (els.frame.dataset) els.frame.dataset.live = '1';
-    setFrameHeight(height);
+    setFrameHeight(height);requestTrackingSticky();
   }
 
   /* ---------- Descargas ---------- */
@@ -1617,7 +1621,7 @@
       els.frame.addEventListener('load', function () {
         if (!els.frame.getAttribute('srcdoc')) return;
         setFrameState('ready');
-        watchFrameFallback();
+        watchFrameFallback();requestTrackingSticky();
       });
     }
 
