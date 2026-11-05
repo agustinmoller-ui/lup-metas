@@ -393,6 +393,7 @@
   function boot() {
     cacheElements();
     bindEvents();
+    initHomeExtras();
 
     state.activationToken = readActivationToken();
 
@@ -1043,6 +1044,7 @@
   }
 
   function renderMonthlyBonus(bonus) {
+    renderWorkdaysEditor(bonus);
     var b = bonus && typeof bonus === 'object' && !Array.isArray(bonus) ? bonus : null;
     resetBonusPanel();
 
@@ -1284,7 +1286,7 @@
     var data = event.data;
     if (!data || typeof data !== 'object') return;
     if (data.type === 'lup:tracking:request') {
-      var allowed = ['trackingGet','milestoneAdd','milestoneToggle','milestoneEdit','milestoneRemove'];
+      var allowed = ['trackingGet','milestoneAdd','milestoneToggle','milestoneEdit','milestoneRemove','bonusWorkdaysSet'];
       if (!state.token || state.page !== 'seguimiento2026' || allowed.indexOf(data.action) < 0 || typeof data.requestId !== 'string' || data.requestId.length > 100) return;
       var target = event.source, session = state.token;
       callApi(data.action,{token:session,payload:data.payload || {}}).then(function(result){
@@ -1652,4 +1654,6 @@
     boot();
   }
 setInterval(function(){if(state.token && state.page === null && document.visibilityState !== 'hidden') loadHome();},300000);
+function initHomeExtras(){document.querySelectorAll('[data-fold]').forEach(function(b){b.addEventListener('click',function(){var p=document.getElementById(b.dataset.fold);p.hidden=!p.hidden;b.setAttribute('aria-expanded',String(!p.hidden));b.textContent=p.hidden?'Mostrar ▾':'Ocultar ▴';});});var mode=document.getElementById('workdays-mode'),form=document.getElementById('workdays-form');mode.addEventListener('change',function(){['workdays-elapsed','workdays-remaining'].forEach(function(id){document.getElementById(id).disabled=mode.value!=='manual';});});form.addEventListener('submit',function(e){e.preventDefault();var msg=document.getElementById('workdays-feedback'),p={mode:mode.value};if(p.mode==='manual'){p.elapsedWorkdays=Number(document.getElementById('workdays-elapsed').value);p.remainingWorkdays=Number(document.getElementById('workdays-remaining').value);if(!Number.isInteger(p.elapsedWorkdays)||!Number.isInteger(p.remainingWorkdays)||p.elapsedWorkdays<0||p.remainingWorkdays<0||(p.elapsedWorkdays+p.remainingWorkdays<1||p.elapsedWorkdays+p.remainingWorkdays>31)){msg.textContent='Ingresa días enteros válidos, máximo 31 en total.';return;}}msg.textContent='Guardando…';form.dataset.saving='yes';callApi('bonusWorkdaysSet',{token:state.token,payload:p},45000).then(function(r){msg.textContent='Días guardados para este mes.';renderHome(r.home,r.backupUrl,r.monthlyBonus);}).catch(function(err){msg.textContent=err.message||'No se pudo guardar.';}).finally(function(){delete form.dataset.saving;});});}
+function renderWorkdaysEditor(data){var box=document.getElementById('workdays-editor');if(!box)return;box.hidden=state.role!=='admin'||!data||!data.month;if(box.hidden)return;var form=document.getElementById('workdays-form');document.getElementById('workdays-estimate').textContent='Automático estimado: '+data.autoElapsedWorkdays+' transcurridos y '+data.autoRemainingWorkdays+' restantes. El ajuste manual rige solo este mes.';if(form.contains(document.activeElement)&&!form.dataset.saving)return;var mode=document.getElementById('workdays-mode');mode.value=data.mode||'auto';document.getElementById('workdays-elapsed').value=data.elapsedWorkdays;document.getElementById('workdays-remaining').value=data.remainingWorkdays;mode.dispatchEvent(new Event('change'));}
 })();
