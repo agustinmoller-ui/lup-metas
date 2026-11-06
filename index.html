@@ -15,6 +15,7 @@
 <link as="font" crossorigin="" href="assets/fuente_1.ttf" rel="preload" type="font/ttf"/>
 <link href="styles.css?v=20261105-tabla4" rel="stylesheet"/>
 <link rel="stylesheet" href="tasks.css?v=20261105-tareas1"/>
+<link rel="stylesheet" href="minutes.css?v=20261106-minutas1"/>
 </head>
 <body>
 <svg aria-hidden="true" class="sprite" focusable="false" height="0" width="0">
@@ -488,7 +489,14 @@
 <p><strong>Contenido privado.</strong> Las secciones se abren solo con tu sesión activa. Si la sesión expira, el portal te pedirá la clave nuevamente.</p>
 </div>
 </section>
-<section id="panel-tareas" class="panel panel-tareas" hidden aria-label="Tareas del equipo"><div id="tasks-root"></div></section>
+<section id="panel-tareas" class="panel panel-tareas" hidden aria-label="Tareas del equipo">
+<div class="lm-subnav" role="tablist" aria-label="Vistas de Tareas">
+<button type="button" role="tab" id="tab-tareas-lista" data-tasks-tab="lista" aria-selected="true" aria-controls="tasks-root" class="is-active">Tareas</button>
+<button type="button" role="tab" id="tab-tareas-minutas" data-tasks-tab="minutas" aria-selected="false" aria-controls="minutes-root" tabindex="-1">Minutas</button>
+</div>
+<div id="tasks-root" role="tabpanel" aria-labelledby="tab-tareas-lista"></div>
+<div id="minutes-root" role="tabpanel" aria-labelledby="tab-tareas-minutas" hidden></div>
+</section>
 <!-- Contenido de página -->
 <section aria-labelledby="content-title" class="panel panel-content" hidden="" id="panel-content">
 <header class="content-head">
@@ -672,6 +680,7 @@
 </div>
 </div>
 <script src="tasks.js?v=20261105-tareas2"></script>
-<script src="app.js?v=20261105-tareas1"></script>
+<script src="minutes.js?v=20261106-minutas1"></script>
+<script src="app.js?v=20261106-minutas1"></script>
 </body>
 </html>

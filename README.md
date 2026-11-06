@@ -16,3 +16,7 @@ El administrador define su propia clave mediante un enlace inicial de un solo us
 ## Gestión operativa del equipo
 
 La sección Tareas incorpora Owner, áreas configurables, fechas de realización y límite, estados y resúmenes por persona. Sus datos son independientes de los KPI y de los bonos. Administración edita y el perfil de lectura consulta. Las copias técnicas se conservan privadas, sin enlazarlas desde Inicio.
+
+## Minutas
+
+Tareas contiene una subpestaña Minutas con tabla de fecha, PDF y palabras clave. Permite rango de fechas y búsqueda combinada sin distinguir tildes. Los documentos y metadatos se guardan en LupPortalPrivate (RLS cerrado); lupMinutes valida la sesión contra portalMetas antes de responder. GitHub contiene solo la interfaz, nunca PDFs ni el contenido de reuniones. Las sesiones del propietario autenticado en Base44 pueden verificar los mismos registros para mantenimiento.

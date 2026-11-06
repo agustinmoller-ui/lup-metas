@@ -9,6 +9,7 @@
   'use strict';
 
   var API_ENDPOINT = 'https://lupita-f3e3c640.base44.app/functions/portalMetas';
+  var MINUTES_ENDPOINT = 'https://lupita-f3e3c640.base44.app/functions/lupMinutes';
   var SESSION_KEY = 'lup.portal.session';
   var PLACEHOLDER = '__API_ENDPOINT__';
   var MIN_PASSWORD = 12;
@@ -173,7 +174,7 @@
   }
 
   /* ---------- Cliente de API ---------- */
-  function callApi(action, payload, timeoutMs) {
+  function callApi(action, payload, timeoutMs, endpoint) {
     if (!isConfigured()) {
       return Promise.reject(new ApiError('El portal todavía no está conectado al servidor privado.', 0, 'not_configured'));
     }
@@ -187,7 +188,7 @@
       timer = setTimeout(function () { controller.abort(); }, timeoutMs || 20000);
     }
 
-    return fetch(API_ENDPOINT, {
+    return fetch(endpoint || API_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -790,13 +791,36 @@
     if (els.navAdmin) els.navAdmin.classList.remove('is-active');
   }
 
-  var tasksCleanup = null;
-  function clearTasks() {if(tasksCleanup){tasksCleanup();tasksCleanup=null;}if(els.tasksRoot)els.tasksRoot.textContent='';}
+  var tasksCleanup = null, tasksTab = 'lista';
+  function clearTasks() {
+    if(tasksCleanup){tasksCleanup();tasksCleanup=null;}
+    if(els.tasksRoot)els.tasksRoot.textContent='';
+    var m=byId('minutes-root');if(m)m.textContent='';
+  }
+  function renderTasksTab(tab) {
+    if(!state.token)return;
+    clearTasks();tasksTab=tab==='minutas'?'minutas':'lista';
+    var minutes=tasksTab==='minutas',mr=byId('minutes-root');
+    els.tasksRoot.hidden=minutes;if(mr)mr.hidden=!minutes;
+    document.querySelectorAll('[data-tasks-tab]').forEach(function(node){
+      var active=node.getAttribute('data-tasks-tab')===tasksTab;
+      node.classList.toggle('is-active',active);node.setAttribute('aria-selected',String(active));node.tabIndex=active?0:-1;
+    });
+    var root=minutes?mr:els.tasksRoot,mod=minutes?window.LupMinutes:window.LupTasks;
+    if(!root||!mod){if(root)root.textContent='No se pudo cargar '+(minutes?'Minutas':'Tareas')+'. Recarga el portal.';return;}
+    var instance=mod.mount({container:root,role:state.role,api:function(action,payload){
+      return callApi(action,{token:state.token,payload:payload||{}},30000,minutes?MINUTES_ENDPOINT:API_ENDPOINT).catch(function(e){if(e.status===401)handleSessionLoss('Tu sesión terminó.');throw e;});
+    }});
+    tasksCleanup=typeof instance==='function'?instance:(instance&&typeof instance.destroy==='function'?function(){instance.destroy();}:null);
+    renderBreadcrumbs({label:minutes?'Tareas / Minutas':'Tareas'});
+  }
   function openTasks() {
-    if(!state.token)return;state.page='tareas';showPanel('tasks');setActiveNav('tareas');renderBreadcrumbs({label:'Tareas'});closeDrawer(false);clearTasks();
-    if(!window.LupTasks){els.tasksRoot.textContent='No se pudo cargar Tareas. Recarga el portal.';return;}
-    var instance=window.LupTasks.mount({container:els.tasksRoot,role:state.role,api:function(action,payload){return callApi(action,{token:state.token,payload:payload||{}},30000).catch(function(e){if(e.status===401)handleSessionLoss('Tu sesión terminó.');throw e;});}});
-    tasksCleanup=typeof instance==='function'?instance:(instance&&typeof instance.destroy==='function'?function(){instance.destroy();}:null);focusStage();
+    if(!state.token)return;state.page='tareas';showPanel('tasks');setActiveNav('tareas');closeDrawer(false);
+    document.querySelectorAll('[data-tasks-tab]').forEach(function(node){
+      node.onclick=function(){renderTasksTab(node.getAttribute('data-tasks-tab'));};
+      node.onkeydown=function(e){if(['ArrowLeft','ArrowRight','Home','End'].indexOf(e.key)===-1)return;e.preventDefault();var tab=e.key==='Home'?'lista':e.key==='End'?'minutas':tasksTab==='lista'?'minutas':'lista';renderTasksTab(tab);byId(tab==='minutas'?'tab-tareas-minutas':'tab-tareas-lista').focus();};
+    });
+    renderTasksTab(tasksTab);focusStage();
   }
   function showPanel(name) {
     if(name!=='tasks')clearTasks();if(els.panelTasks)els.panelTasks.hidden=name!=='tasks';
