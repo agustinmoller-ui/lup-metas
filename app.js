@@ -695,20 +695,19 @@
         if (!cell || cell.querySelector('[data-open-recaudacion]')) return;
         var old = cell.querySelector("a.discipline-input-link");
         if (old) old.remove();
-        var button = document.createElement('button');
-        button.type = 'button';
+        var button = document.createElement('a');
+        button.href = 'https://docs.google.com/spreadsheets/d/18G6y-8lpqJBIN1oQyTFZF4rv4KU8hRuP5n5blcKqD6w/edit#gid=0';
+        button.target = '_blank';
+        button.rel = 'noopener noreferrer';
         button.className = 'btn-link discipline-input-link';
         button.setAttribute('data-open-recaudacion', '');
         button.textContent = 'Cargar recaudación en Sheet';
-        button.addEventListener('click', function () {
-          window.parent.postMessage({type:'lup:recaudacion:open'}, '*');
-        });
         cell.appendChild(button);
       }
       new MutationObserver(mount).observe(document.body,{childList:true,subtree:true});
       mount();
     }
-    var addon = '<style>a.discipline-input-link{display:none!important}button[data-open-recaudacion]{cursor:pointer;margin-top:.35rem;font:inherit;font-size:.75rem}</style><script>(' + mountRecaudacionButton.toString() + ')();</' + 'script>';
+    var addon = '<style>a.discipline-input-link:not([data-open-recaudacion]){display:none!important}a[data-open-recaudacion]{cursor:pointer;margin-top:.35rem;font:inherit;font-size:.75rem}</style><script>(' + mountRecaudacionButton.toString() + ')();</' + 'script>';
     return html.replace(/<\/body\s*>/i, function (tag) { return addon + tag; });
   }
 
@@ -736,8 +735,12 @@
       if (!html) throw new ApiError('Esta sección llegó sin contenido.', 0, 'empty');
 
       els.frame.removeAttribute('src');
-      els.frame.setAttribute('sandbox', 'allow-scripts allow-modals allow-forms');
-      if (pageKey === 'seguimiento2026') html = addRecaudacionButton(html);
+      var sandbox = 'allow-scripts allow-modals allow-forms';
+      if (pageKey === 'seguimiento2026' && (state.role === 'admin' || state.role === 'viewer')) {
+        sandbox += ' allow-popups allow-popups-to-escape-sandbox';
+        html = addRecaudacionButton(html);
+      }
+      els.frame.setAttribute('sandbox', sandbox);
       els.frame.srcdoc = html;
       if (els.frame.dataset) els.frame.dataset.live = '0';
       els.frame.style.height = DEFAULT_FRAME_HEIGHT + 'px';
@@ -1350,12 +1353,6 @@
     if (event.source !== els.frame.contentWindow) return;
     var data = event.data;
     if (!data || typeof data !== 'object') return;
-    if (data.type === 'lup:recaudacion:open') {
-      if (state.token && state.page === 'seguimiento2026' && (state.role === 'admin' || state.role === 'viewer')) {
-        window.location.assign('https://docs.google.com/spreadsheets/d/18G6y-8lpqJBIN1oQyTFZF4rv4KU8hRuP5n5blcKqD6w/edit#gid=0');
-      }
-      return;
-    }
     if (data.type === 'lup:tracking:request') {
       var allowed = ['trackingGet','milestoneAdd','milestoneToggle','milestoneEdit','milestoneRemove','bonusWorkdaysSet'];
       if (!state.token || state.page !== 'seguimiento2026' || allowed.indexOf(data.action) < 0 || typeof data.requestId !== 'string' || data.requestId.length > 100) return;
