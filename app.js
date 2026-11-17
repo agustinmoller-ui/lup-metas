@@ -265,6 +265,7 @@
   function clearSessionState() {
     state.token = null;
     state.role = null;
+    syncRecaudacionLink(null);
     state.expiresAt = null;
     state.page = null;
     clearSessionStorage();
@@ -688,6 +689,16 @@
     }, 1600);
   }
 
+  function syncRecaudacionLink(panel) {
+    var link = document.getElementById('recaudacion-sheet-link');
+    if (!link) return;
+    var visible = panel === 'content' && state.page === 'seguimiento2026' && !!state.token && (state.role === 'admin' || state.role === 'viewer');
+    if (visible) link.href = 'https://docs.google.com/spreadsheets/d/18G6y-8lpqJBIN1oQyTFZF4rv4KU8hRuP5n5blcKqD6w/edit#gid=0';
+    else link.removeAttribute('href');
+    link.hidden = !visible;
+    link.style.display = visible ? '' : 'none';
+  }
+
   function loadPage(pageKey, options) {
     var meta = PAGES[pageKey];
     if (!meta || !state.token) return;
@@ -713,6 +724,7 @@
 
       els.frame.removeAttribute('src');
       els.frame.setAttribute('sandbox', 'allow-scripts allow-modals allow-forms');
+      if (pageKey === 'seguimiento2026') html = html.replace(/<\/head\s*>/i, '<style>.discipline-input-link{display:none!important}</style></head>');
       els.frame.srcdoc = html;
       if (els.frame.dataset) els.frame.dataset.live = '0';
       els.frame.style.height = DEFAULT_FRAME_HEIGHT + 'px';
@@ -823,6 +835,7 @@
     renderTasksTab(tasksTab);focusStage();
   }
   function showPanel(name) {
+    syncRecaudacionLink(name);
     if(name!=='tasks')clearTasks();if(els.panelTasks)els.panelTasks.hidden=name!=='tasks';
     els.panelInicio.hidden = name !== 'inicio';
     els.panelContent.hidden = name !== 'content';
